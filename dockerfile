@@ -33,7 +33,7 @@ RUN apt-get install -y nginx && \
     nginx -v 
 
 ENTRYPOINT ["nginx status"] 
-ENTRYPOINT ["nginx start"] 
+ENTRYPOINT ["nginx", "-g", "daemon off;"]  
 #Create a working directory in the container 
 
 WORKDIR /app 
