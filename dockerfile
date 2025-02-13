@@ -25,22 +25,15 @@ RUN echo "PYTHONPATH is $PYTHONPATH"
 
 # Verify if Nginx is installed
 
-#RUN which nginx || echo "return non-zero code is 1, proceed to installation ..."
+RUN which nginx || echo "return non-zero code is 1, proceed to installation ..."
 
 # Install Nginx and verify Nginx installation
 
-#RUN #!/bin/sh -c && \
-#    if !which nginx > /dev/null 2>&1; then \
-#        echo "Nginx is not installed. Installing Nginx..." \
-#        apt-get install -y nginx \
-#    else \
-#        echo "Nginx is already installed." \
-#    fi
-# Verify nginx is installed
+RUN apt-get install -y nginx && \
+    nginx -v 
 
-#CMD "service nginx status" | awk -F '/' '/version/{print $2}'
-CMD service nginx status && nginx -v | awk -F'/' '{print $2}'
-
+ENTRYPOINT ["nginx status"] 
+ENTRYPOINT ["nginx start"] 
 #Create a working directory in the container 
 
 WORKDIR /app 
@@ -57,7 +50,5 @@ EXPOSE 80
 
 #start nginx
 
-CMD ["nginx" "/bin/sh"] 
+CMD ["/bin/sh"] 
  
-
-
