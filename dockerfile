@@ -1,13 +1,13 @@
 FROM nginx:latest
 
-LABEL maintainer alpine image-developer
+LABEL maintainer novist-image-developer
 
 # Verify if python3 is installed 
-#
-Run which python || echo "python not found" 
+
+RUN which python || echo "python not found" 
   
-#  install python3, and py3-pip
-#
+# Update the container, and install python3 and py3-pip
+
 RUN apt-get update && apt-get install -y \ 
     python3 \
     python3-pip \
@@ -15,40 +15,48 @@ RUN apt-get update && apt-get install -y \
 
 # Verify python installation
 
-RUN python3 -V
+RUN python3 -V > /tmp/python_version
 
-# Set an environment variable for python3 and verify environment variable
+# Read the Python version from the file and set it as an ENV variable
 
-ENV PYTHONPATH="/usr/bin/python3.*"
+RUN export PYTHON_VERSION=$(cat /tmp/python_version) && \
+    echo "PYTHON_VERSION=$PYTHON_VERSION"
 
-RUN echo "PYTHONPATH is $PYTHONPATH"
+# Set PYTHONPATH dynamically based on python version 
+
+RUN export PYTHONPATH="/usr/bin/python3" && \
+    echo "PYTHONPATH=$PYTHONPATH" >> /etc/environment
 
 # Verify if Nginx is installed
 
-RUN which nginx || echo "return non-zero code is 1, proceed to installation ..."
+RUN nginx -v || echo "return non-zero code is 1, proceed to installation ..."
 
-# Install Nginx and verify Nginx installation
+# Update container environment and install Nginx and verify Nginx installation
 
-RUN apt-get install -y nginx && \
-    nginx -v 
+RUN apt-get update && \
+    apt-get install -y nginx
 
-ENTRYPOINT ["nginx status"] 
-ENTRYPOINT ["nginx", "-g", "daemon off;"]  
+#ENTRYPOINT ["nginx status"] 
+#ENTRYPOINT ["nginx", "-g", "daemon off;"]  
 #Create a working directory in the container 
 
 WORKDIR /app 
 
 # Copy a file to the default Nginx location
 
-COPY welcome.py /var/www/localhost/htdocs
+COPY welcome.py /app
 
-COPY index.html /var/www/app
+#/usr/share/nginx/html
 
-# Expose container to a port
+#COPY index.html /var/www/app
+
+# Modify Nginx configuration to serve Python scripts
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose container for web requests to port 80
 
 EXPOSE 80 
 
-#start nginx
+CMD ["RUN"]
 
-CMD ["/bin/sh"] 
- 
