@@ -1,4 +1,4 @@
-FROM nginx:latest
+FROM alpine:3.21
 
 LABEL maintainer novist-image-developer
 
@@ -8,9 +8,8 @@ RUN which python || echo "python not found"
   
 # Update the container, and install python3 and py3-pip
 
-RUN apt-get update && apt-get install -y \ 
-    python3 \
-    python3-pip \
+RUN apk update && apk add --no-cache python3 \
+    py3-pip \
     && rm -rf /var/lib/apt/lists/* 
 
 # Verify python installation
@@ -33,8 +32,8 @@ RUN nginx -v || echo "return non-zero code is 1, proceed to installation ..."
 
 # Update container environment and install Nginx and verify Nginx installation
 
-RUN apt-get update && \
-    apt-get install -y nginx
+RUN apk update && \
+    apk add nginx
 
 #ENTRYPOINT ["nginx status"] 
 #ENTRYPOINT ["nginx", "-g", "daemon off;"]  
