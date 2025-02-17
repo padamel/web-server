@@ -1,2 +1,17 @@
-print ("Welcome!!!")
+from flask import Flask, jsonify
+
+
+
+app=Flask(__name__)
+
+
+@app.route("/")
+def web_root():
+    return jsonify ({"Message":"Welcome to my page!!!"})
+
+
+if __name__=="__main__":
+    app.run (debug=True,host="0.0.0.0",port=80)
+
+
 
