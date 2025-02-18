@@ -6,9 +6,9 @@ LABEL maintainer novist-image-developer
 
 RUN which python || echo "python not found" 
   
-# Update the container, and install python3 and py3-pip
+# Update the container, and install python3, and py3-pip
 
-RUN apk update && apk add --no-cache python3 \
+RUN apk update && apk add --no-cache python3 \ 
     py3-pip \
     && rm -rf /var/lib/apt/lists/* 
 
@@ -35,27 +35,35 @@ RUN nginx -v || echo "return non-zero code is 1, proceed to installation ..."
 RUN apk update && \
     apk add nginx
 
-#ENTRYPOINT ["nginx status"] 
-#ENTRYPOINT ["nginx", "-g", "daemon off;"]  
-#Create a working directory in the container 
+# Verify if Flask is intalled
 
-WORKDIR /app 
+RUN flask --version || echo "Flask module not found, proceed to installation..."
 
-# Copy a file to the default Nginx location
+# Install Flask and wsgi
 
-COPY welcome.py /app
+RUN apk add py3-flask
+
+# Install uwsgi
+
+RUN apk add --no-cache uwsgi 
+    
+WORKDIR /home 
+
+# Copy the python application to the custom app alpine directory
+
+COPY app.py /home
 
 #/usr/share/nginx/html
 
-#COPY index.html /var/www/app
+COPY app.py /var/www/localhost/htdocs/
 
 # Modify Nginx configuration to serve Python scripts
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY app.py etc/nginx/http.d/default.conf/
 
 # Expose container for web requests to port 80
 
 EXPOSE 80 
 
-CMD ["RUN"]
+CMD ["RUN","apk"]
 
