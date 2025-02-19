@@ -53,7 +53,7 @@ WORKDIR /home
 
 #COPY app1.py /home
 
-#/usr/share/nginx/html
+COPY index.html /usr/share/nginx/html
 
 #COPY app1.py /var/www/localhost/htdocs/
 
