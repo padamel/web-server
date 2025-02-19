@@ -43,7 +43,7 @@ RUN flask --version || echo "Flask module not found, proceed to installation..."
 
 RUN apk add py3-flask
 
-# Install uwsgi
+# Install uwsgi program required to run our python app
 
 RUN apk add --no-cache uwsgi 
     
@@ -51,19 +51,21 @@ WORKDIR /home
 
 # Copy the python application to the custom app alpine directory
 
-COPY app.py /home
+#COPY app1.py /home
 
 #/usr/share/nginx/html
 
-COPY app.py /var/www/localhost/htdocs/
+#COPY app1.py /var/www/localhost/htdocs/
 
 # Modify Nginx configuration to serve Python scripts
 
-COPY app.py etc/nginx/http.d/default.conf/
+#COPY app1.py etc/nginx/http.d/default.conf/
 
 # Expose container for web requests to port 80
 
 EXPOSE 80 
 
-CMD ["RUN","apk"]
+# Run uwsgi with the configuration in the .ini file
+
+CMD ["RUN","apk", "uwsgi", "--ini", "config_uwsgi.ini"]
 
