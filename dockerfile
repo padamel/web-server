@@ -5,8 +5,12 @@ LABEL maintainer novist-image-developer
 # Verify if python3 is installed 
 
 RUN which python || echo "python not found" 
+
+# Set environment variable for uWSGI configuration
+
+ENV APP_ROOT=/var/lib/nginx/uwsgi
   
-# Update the container, and install python3, and py3-pip
+# Update the container, and install python3, py3-pi and remove packages that are not neccessaries
 
 RUN apk update && apk add --no-cache python3 \ 
     py3-pip \
@@ -14,17 +18,11 @@ RUN apk update && apk add --no-cache python3 \
 
 # Verify python installation
 
-RUN python3 -V > /tmp/python_version
+RUN python3 -V 
 
-# Read the Python version from the file and set it as an ENV variable
+# Verify python location
 
-RUN export PYTHON_VERSION=$(cat /tmp/python_version) && \
-    echo "PYTHON_VERSION=$PYTHON_VERSION"
-
-# Set PYTHONPATH dynamically based on python version 
-
-RUN export PYTHONPATH="/usr/bin/python3" && \
-    echo "PYTHONPATH=$PYTHONPATH" >> /etc/environment
+RUN find / -name python3
 
 # Verify if Nginx is installed
 
@@ -47,19 +45,14 @@ RUN apk add py3-flask
 
 RUN apk add --no-cache uwsgi 
     
-WORKDIR /home 
+WORKDIR /home \
+        $APP_ROOT
+        
 
-# Copy the python application to the custom app alpine directory
+#Copy the python application and the uwsgi file to the defined directory
 
-#COPY app1.py /home
-
-COPY index.html /usr/share/nginx/html
-
-#COPY app1.py /var/www/localhost/htdocs/
-
-# Modify Nginx configuration to serve Python scripts
-
-#COPY app1.py etc/nginx/http.d/default.conf/
+COPY app1.py /home \
+COPY config_uwsgi.ini $APP_ROOT
 
 # Expose container for web requests to port 80
 
