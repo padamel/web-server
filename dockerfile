@@ -52,7 +52,7 @@ WORKDIR /home \
 #Copy the python application and the uwsgi file to the defined directory
 
 COPY app1.py /home \
-COPY config_uwsgi.ini $APP_ROOT
+     config_uwsgi.ini $APP_ROOT
 
 # Expose container for web requests to port 80
 
