@@ -8,7 +8,7 @@ RUN which python || echo "python not found"
 
 # Set environment variable for uWSGI configuration
 
-ENV APP_ROOT=/var/lib/nginx/uwsgi
+ENV APP_ROOT=/usr/share/nginx/html
   
 # Update the container, and install python3, py3-pi and remove packages that are not neccessaries
 
@@ -50,9 +50,10 @@ WORKDIR /home \
         
 
 #Copy the python application and the uwsgi file to the defined directory
+COPY app1.py /home
 
-COPY app1.py /home \
-     config_uwsgi.ini $APP_ROOT
+COPY config_uwsgi.ini $APP_ROOT  
+
 
 # Expose container for web requests to port 80
 
