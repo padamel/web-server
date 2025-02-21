@@ -1,9 +1,9 @@
-from flask import Flask, jsonify
+from flask import myapp
 app=Flask(__name__)
 
 @app.route("/")
 def web_root():
-    return jsonify ({"Message":"Welcome to my page!!!"})
+    return{"Message":"Welcome to my page!!!"}
 
 
 if __name__=="__main__":
