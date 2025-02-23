@@ -67,5 +67,5 @@ EXPOSE 80
 
 # Run uwsgi with the configuration in the .ini file
 
-CMD ["RUN","apk", "uwsgi", "--ini", "config_uwsgi.ini"]
+CMD [ "uwsgi", "--ini", "config_uwsgi.ini"]
 
