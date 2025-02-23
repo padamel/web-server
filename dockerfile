@@ -8,8 +8,9 @@ RUN which python || echo "python not found"
 
 # Set environment variable for uWSGI configuration
 
-ENV APP_ROOT=/usr/share/nginx/html
-  
+#ENV APP_ROOT=/usr/share/nginx/html
+ENV APP_ROOT=/var/www/html/ 
+
 # Update the container, and install python3, py3-pi and remove packages that are not neccessaries
 
 RUN apk update && apk add --no-cache python3 \ 
@@ -41,19 +42,24 @@ RUN flask --version || echo "Flask module not found, proceed to installation..."
 
 RUN apk add py3-flask
 
-# Install uwsgi program required to run our python app
+# Install uwsgi program required to run our python app and update alpine 
 
-RUN apk add --no-cache uwsgi 
+RUN apk add --no-cache uwsgi && \
+    apk update
     
-WORKDIR /home \
-        $APP_ROOT
-        
+WORKDIR /home        
 
-#Copy the python application and the uwsgi file to the defined directory
+#Copy the python text to the environment variable 
 
-COPY app1.py /home
+COPY index.py $APP_ROOT
 
-COPY config_uwsgi.ini $APP_ROOT  
+#Copy the nginx config file
+
+COPY ./conf/* /etc/nginx
+
+#Copy the uwsgi config file under its directory
+
+COPY ./config_uwsgi/* /etc/uwsgi/
 
 # Expose container for web requests to port 80
 
