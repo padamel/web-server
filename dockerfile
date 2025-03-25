@@ -4,12 +4,7 @@ LABEL maintainer novist-image-developer
 
 # Verify if python3 is installed 
 
-RUN which python || echo "python not found" 
-
-# Set environment variable for uWSGI configuration
-
-#ENV APP_ROOT=/usr/share/nginx/html
-#ENV APP_ROOT=/var/www/html/ 
+RUN which python || echo "python not found"  
 
 # Update the container, and install python3, py3-pi and remove packages that are not neccessaries
 
@@ -38,7 +33,7 @@ RUN apk update && \
 
 RUN flask --version || echo "Flask module not found, proceed to installation..."
 
-# Install Flask and wsgi
+# Install Flask
 
 RUN apk add py3-flask
 
@@ -51,9 +46,7 @@ RUN apk add --no-cache uwsgi && \
 
 EXPOSE 80 
 
-# Run uwsgi with the configuration in the .ini file
+# Start nginx service
 
 CMD ["nginx", "-g", "daemon off;"]
-
-#CMD [ "uwsgi", "--ini", "config_uwsgi.ini"]
 
